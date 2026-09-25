@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Student Test Submissions')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header">
+                <h1 class="title title--teacher">Student Test Submissions</h1>
+                <p class="subtitle" th:if="${filterTest != null}" th:text="|Test: ${filterTest.title}|">Test: General Knowledge Quiz</p>
+                <p class="subtitle" th:if="${filterTest == null}">Every attempt on the tests you created.</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="get" th:action="@{/teacher/submissions}" class="field-row" style="align-items:flex-end;">
+                <div class="field" style="margin-bottom:0;">
+                    <label for="testId">Filter by test</label>
+                    <select id="testId" name="testId" onchange="this.form.submit()">
+                        <option value="">All tests</option>
+                        <option th:each="quiz : ${tests}" th:value="${quiz.id}" th:text="${quiz.title}"
+                                th:selected="${filterTestId != null and filterTestId == quiz.id}">Test</option>
+                    </select>
+                </div>
+                <div class="field" style="flex:0 0 auto; margin-bottom:0;">
+                    <button class="btn btn--ghost" type="submit">Apply</button>
+                </div>
+            </form>
+
+            <hr class="hr"/>
+
+            <div class="empty" th:if="${results.isEmpty()}">No student submissions found.</div>
+
+            <div class="table-wrap" th:unless="${results.isEmpty()}">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Test</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Overtime</th>
+                        <th>Taken</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="result : ${results}">
+                        <td>
+                            <strong th:text="${result.student.username}">ali_student</strong>
+                            <div class="item__meta" th:text="${result.student.email}">ali@example.com</div>
+                        </td>
+                        <td th:text="${result.quiz.title}">General Knowledge Quiz</td>
+                        <td th:text="|${result.score}/${result.total}|">3/5</td>
+                        <td th:text="${result.percentageLabel}">60.0%</td>
+                        <td th:text="${result.overtimeSeconds > 0 ? result.overtimeLabel + ' (' + result.overtimeSeconds + 's)' : '—'}">—</td>
+                        <td th:text="${result.takenAtLabel}">25 Sep 2026, 18:04</td>
+                        <td>
+                            <a class="btn btn--small btn--ghost"
+                               th:href="@{/teacher/submissions/{id}(id=${result.id})}">Review</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:860px;">
+            <a class="tile tile--sky" th:href="@{/teacher/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

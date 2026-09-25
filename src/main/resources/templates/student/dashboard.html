@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Student Hub')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--hub">
+            <div class="card__header">
+                <h1 class="title title--student">Student Hub</h1>
+                <p class="welcome-line" th:text="|Welcome, ${currentUser.username}!|">Welcome, ali_student!</p>
+                <p class="meta-line" th:text="'Email: ' + ${currentUser.email} + ' | ID: ' + ${currentUser.id}">Email: ali@example.com | ID: 2</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat__value" th:text="${testCount}">0</div>
+                    <div class="stat__label">Tests available</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${classCount}">0</div>
+                    <div class="stat__label">Classes joined</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${resultCount}">0</div>
+                    <div class="stat__label">Tests taken</div>
+                </div>
+            </div>
+
+            <div class="tiles">
+                <a class="tile tile--green" th:href="@{/student/tests}">📝  Available Tests</a>
+                <a class="tile tile--sky" th:href="@{/student/join}">➕  Join a Class</a>
+                <a class="tile tile--purple" th:href="@{/student/results}">📊  My Results History</a>
+                <a class="tile tile--rose" th:href="@{/logout}">🚪  Logout</a>
+            </div>
+
+            <p class="hint" th:if="${latestTest != null}" th:text="|Next up: ${latestTest.title}|">Next up: General Knowledge Quiz</p>
+        </div>
+
+        <div class="card card--list" th:if="${!recentResults.isEmpty()}">
+            <h2 class="section">Your latest results</h2>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Taken</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="result : ${recentResults}">
+                        <td th:text="${result.quiz.title}">General Knowledge Quiz</td>
+                        <td th:text="|${result.score}/${result.total}|">3/5</td>
+                        <td th:text="${result.percentageLabel}">60.0%</td>
+                        <td th:text="${result.relativeTimeLabel}">2 hours ago</td>
+                        <td>
+                            <a class="btn btn--small btn--ghost"
+                               th:href="@{/student/results/{id}(id=${result.id})}">View</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

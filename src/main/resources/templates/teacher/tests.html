@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Created Tests')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header">
+                <h1 class="title title--teacher">My Created Tests</h1>
+                <p class="subtitle">Public tests are open to everyone; class tests only to the class they were made for.</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="empty" th:if="${tests.isEmpty()}">
+                You haven't created any tests yet.
+            </div>
+
+            <ul class="list" th:unless="${tests.isEmpty()}">
+                <li class="item" th:each="quiz : ${tests}">
+                    <div class="item__top">
+                        <div>
+                            <p class="item__title" th:text="${quiz.title}">General Knowledge Quiz</p>
+                            <p class="item__meta">
+                                <span class="chip chip--muted" th:text="${quiz.language}">English</span>
+                                <span class="chip chip--sky" th:text="|⏱ ${quiz.durationLabel}|">⏱ 10 min</span>
+                                <span class="chip"
+                                      th:classappend="${quiz.allowsOvertime()} ? 'chip--amber' : 'chip--muted'"
+                                      th:text="${quiz.allowsOvertime()} ? 'Allows overtime' : 'Auto-submit at 0:00'">Auto-submit</span>
+                                <span class="chip chip--purple"
+                                      th:text="${quiz.publicTest ? 'Public' : (quiz.classRoom != null ? 'Class: ' + quiz.classRoom.className : 'Class only')}">Public</span>
+                            </p>
+                            <p class="item__meta"
+                               th:text="|${questionCounts[quiz.id]} question(s) • ${submissionCounts[quiz.id]} submission(s)|">
+                                5 question(s) • 3 submission(s)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item__actions">
+                        <a class="btn btn--small btn--ghost"
+                           th:href="@{/teacher/submissions(testId=${quiz.id})}">View submissions</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:540px;">
+            <a class="tile tile--purple" th:href="@{/teacher/tests/new}">➕  Create New Test</a>
+            <a class="tile tile--sky" th:href="@{/teacher/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

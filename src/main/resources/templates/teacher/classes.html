@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Classes')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header">
+                <h1 class="title title--teacher">My Classes</h1>
+                <p class="subtitle">Create a class and share its 6-character code with your students.</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="post" th:action="@{/teacher/classes}" class="field-row" style="align-items:flex-end;">
+                <div class="field" style="margin-bottom:0;">
+                    <label for="className">Class Name</label>
+                    <input type="text" id="className" name="className" placeholder="e.g. Physics 101"
+                           maxlength="100" required/>
+                </div>
+                <div class="field" style="flex:0 0 auto; margin-bottom:0;">
+                    <button class="btn btn--primary" type="submit">Create Class</button>
+                </div>
+            </form>
+
+            <hr class="hr"/>
+
+            <div class="empty" th:if="${classes.isEmpty()}">
+                You haven't created any classes yet.
+            </div>
+
+            <ul class="list" th:unless="${classes.isEmpty()}">
+                <li class="item" th:each="classRoom : ${classes}">
+                    <div class="item__top">
+                        <div>
+                            <p class="item__title" th:text="${classRoom.className}">Physics 101</p>
+                            <p class="item__meta">
+                                Class Code:
+                                <strong th:text="${classRoom.classCode}">PHY101</strong>
+                                <button class="btn btn--small btn--ghost" type="button"
+                                        th:attr="data-copy=${classRoom.classCode}">Copy</button>
+                            </p>
+                            <p class="item__meta" th:text="|${studentCounts[classRoom.id]} student(s) joined|">0 student(s) joined</p>
+                        </div>
+                        <span class="chip chip--sky" th:text="|ID ${classRoom.id}|">ID 3</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:540px;">
+            <a class="tile tile--purple" th:href="@{/teacher/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

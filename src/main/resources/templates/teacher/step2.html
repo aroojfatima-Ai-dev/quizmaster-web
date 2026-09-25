@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Create Test - Step 2')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="steps">
+                <span class="step-pill">Step 1 · Test details</span>
+                <span class="step-pill step-pill--active">Step 2 of 2 · Questions</span>
+            </div>
+
+            <div class="card__header" style="text-align:center;">
+                <h1 class="title title--teacher">Test Questions</h1>
+                <p class="subtitle" th:text="|${details.title} • ${details.language} • ${details.totalTimeSeconds / 60} min|">
+                    Chapter 4 • English • 15 min
+                </p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="alert alert--info" th:if="${importedFrom != null}">
+                Questions imported from <strong th:text="${importedFrom}">sample-questions.txt</strong> are waiting
+                on the preview screen —
+                <a th:href="@{/teacher/tests/new/import/preview}">review them</a>.
+            </div>
+
+            <!-- question being typed / edited -->
+            <h2 class="section" th:text="${editing != null ? 'Edit question ' + (editingIndex + 1) : 'Add a question'}">
+                Add a question
+            </h2>
+
+            <form method="post" th:action="@{/teacher/tests/new/questions/submit}" data-one-shot>
+                <div class="field">
+                    <label for="questionText">Question</label>
+                    <textarea id="questionText" name="questionText" rows="2" maxlength="2000" required
+                              th:attr="dir=${direction}"
+                              th:text="${editing != null ? editing.questionText : ''}"
+                              placeholder="Type the question here">What is the capital of France?</textarea>
+                </div>
+
+                <div class="options-grid">
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionA">A)</label>
+                        <input type="text" id="optionA" name="optionA" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${editing != null ? editing.optionA : ''}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionB">B)</label>
+                        <input type="text" id="optionB" name="optionB" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${editing != null ? editing.optionB : ''}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionC">C)</label>
+                        <input type="text" id="optionC" name="optionC" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${editing != null ? editing.optionC : ''}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionD">D)</label>
+                        <input type="text" id="optionD" name="optionD" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${editing != null ? editing.optionD : ''}"/>
+                    </div>
+                </div>
+
+                <div class="field" style="margin-top:14px;">
+                    <span class="field-label">Correct Answer:</span>
+                    <div class="radio-row">
+                        <label class="radio-pill" th:each="key : ${ {'A','B','C','D'} }">
+                            <input type="radio" name="correctOption" th:value="${key}"
+                                   th:checked="${(editing != null ? editing.correctOption : 'A') == key}"/>
+                            <span th:text="${key}">A</span>
+                        </label>
+                    </div>
+                    <p class="hint">The option text each letter stands for is the one typed above.</p>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" name="topic" maxlength="100"
+                               th:value="${editing != null ? editing.topic : 'General'}" placeholder="General"/>
+                    </div>
+                    <div class="field">
+                        <label for="difficulty">Difficulty:</label>
+                        <select id="difficulty" name="difficulty">
+                            <option value="EASY" th:selected="${editing != null && editing.difficulty == 'EASY'}">Easy</option>
+                            <option value="MEDIUM"
+                                    th:selected="${editing == null || editing.difficulty == 'MEDIUM'}">Medium</option>
+                            <option value="HARD" th:selected="${editing != null && editing.difficulty == 'HARD'}">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="nav-row">
+                    <button class="btn btn--ghost" type="submit" name="action" value="back">← Back</button>
+                    <button class="btn btn--ghost" type="submit" name="action" value="add">
+                        <span th:text="${editing != null ? '✓ Save changes' : '➕ Add Question'}">➕ Add Question</span>
+                    </button>
+                    <span class="spacer"></span>
+                    <button class="btn btn--primary" type="submit" name="action" value="finish">✓ Finish &amp; Save Test</button>
+                </div>
+            </form>
+
+            <hr class="hr"/>
+
+            <h2 class="section">Questions in this test
+                <span class="chip chip--teal" th:text="${manualCount}">0</span>
+            </h2>
+
+            <div class="empty" th:if="${manualQuestions.isEmpty()}">
+                No questions yet. Type one above, or import a file.
+            </div>
+
+            <ul class="list" th:unless="${manualQuestions.isEmpty()}">
+                <li class="item" th:each="question, stat : ${manualQuestions}">
+                    <div class="item__top">
+                        <div>
+                            <p class="item__title" th:text="|Q${stat.count}. ${question.questionText}|">Q1. ...</p>
+                            <p class="item__meta" th:text="|Answer: ${question.correctOption} — ${question.optionText(question.correctOption)}|">
+                                Answer: B — Paris
+                            </p>
+                            <p class="item__meta">
+                                <span class="chip chip--muted" th:text="${question.topic}">Geography</span>
+                                <span class="chip chip--sky" th:text="${question.difficulty}">EASY</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item__actions">
+                        <form method="post" th:action="@{/teacher/tests/new/questions/edit}">
+                            <input type="hidden" name="index" th:value="${stat.index}"/>
+                            <button class="btn btn--small btn--ghost" type="submit">✏ Edit</button>
+                        </form>
+                        <form method="post" th:action="@{/teacher/tests/new/questions/remove}"
+                              data-confirm="Remove this question from the test?">
+                            <input type="hidden" name="index" th:value="${stat.index}"/>
+                            <button class="btn btn--small btn--danger" type="submit">🗑 Remove</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <hr class="hr"/>
+
+            <h2 class="section section--sub">Or import questions from a file</h2>
+            <p class="hint">A PDF, Word (.docx) or text (.txt) file that follows the documented format. You can
+                combine imported questions with the ones typed here.</p>
+            <div class="item__actions">
+                <a class="btn btn--small btn--teal tile--teal" th:href="@{/teacher/tests/new/import}">
+                    📄 Upload Questions File
+                </a>
+            </div>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:860px;">
+            <a class="tile tile--sky" th:href="@{/teacher/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

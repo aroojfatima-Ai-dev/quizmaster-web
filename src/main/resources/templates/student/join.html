@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Join a Class')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card">
+            <div class="card__header">
+                <h1 class="title title--student">Join a Class</h1>
+                <p class="subtitle">Ask your teacher for the 6-character class code.</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="post" th:action="@{/student/join}">
+                <div class="field">
+                    <label for="classCode">Class Code (6 alphanumeric characters):</label>
+                    <input type="text" id="classCode" name="classCode" minlength="6" maxlength="6"
+                           required style="text-transform:uppercase; letter-spacing:.28em; text-align:center; font-size:18px;"
+                           placeholder="ABC123" autofocus/>
+                </div>
+                <button class="btn btn--primary btn--block" type="submit">Join Class</button>
+            </form>
+        </div>
+
+        <div class="card card--list">
+            <h2 class="section">Classes you have joined</h2>
+            <div class="empty" th:if="${joinedClasses.isEmpty()}">You are not enrolled in any classes yet.</div>
+            <ul class="list" th:unless="${joinedClasses.isEmpty()}">
+                <li class="item" th:each="classRoom : ${joinedClasses}">
+                    <p class="item__title" th:text="${classRoom.className}">Physics 101</p>
+                    <p class="item__meta">
+                        Class Code: <strong th:text="${classRoom.classCode}">PHY101</strong>
+                        • Teacher: <span th:text="${classRoom.teacher.username}">prof_smith</span>
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:540px;">
+            <a class="tile tile--sky" th:href="@{/student/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div class="page">
+        <div class="card">
+            <div class="card__header">
+                <h1 class="title">QuizMaster Login</h1>
+                <p class="subtitle">Sign in to your account</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="post" th:action="@{/login}" autocomplete="on">
+                <input type="hidden" name="next" th:value="${next}"/>
+                <div class="field">
+                    <label for="usernameOrEmail">Username or Email</label>
+                    <input type="text" id="usernameOrEmail" name="usernameOrEmail"
+                           th:value="${usernameOrEmail}" placeholder="Username or Email" required autofocus/>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required/>
+                </div>
+                <button class="btn btn--primary btn--block" type="submit">Login</button>
+            </form>
+
+            <hr class="hr"/>
+            <a th:href="@{/register}">Don't have an account? Register here</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

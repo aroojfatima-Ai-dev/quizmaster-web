@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Welcome')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div class="page">
+        <div class="card card--dark">
+            <div class="card__header">
+                <h1 class="title" style="color:#f0f9ff; font-size:38px;">Welcome to QuizMaster</h1>
+                <p class="subtitle" style="color:#7dd3fc; font-size:18px;">Learn, Test, Improve</p>
+            </div>
+            <a class="btn btn--accent btn--large" style="min-width:220px;" th:href="@{/login}">Get Started</a>
+            <p class="hint" style="color:#bae6fd; margin-top:16px;">
+                Teachers create classes and timed tests. Students join with a 6-character code.
+            </p>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+            <h2 class="section section--sub">Demo accounts</h2>
+            <p class="meta-line" style="text-align:left;">
+                A demo teacher and student are created on an empty database, with a class
+                (<strong>PHY101</strong>) and a sample test:
+            </p>
+            <div class="field-row" style="text-align:left;">
+                <div class="field">
+                    <span class="field-label">Teacher</span>
+                    <div>prof_smith / teacher123</div>
+                </div>
+                <div class="field">
+                    <span class="field-label">Student</span>
+                    <div>ali_student / student123</div>
+                </div>
+            </div>
+            <p class="hint">Set <code>QUIZMASTER_DEMO_SEED=false</code> to skip the demo data.</p>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

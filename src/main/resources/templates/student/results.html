@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Test Results')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header">
+                <h1 class="title title--student">My Test Results</h1>
+                <p class="subtitle">Results history for <span th:text="${currentUser.username}">ali_student</span></p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="stats" th:unless="${results.isEmpty()}">
+                <div class="stat">
+                    <div class="stat__value" th:text="${results.size()}">0</div>
+                    <div class="stat__label">Tests taken</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="|${averagePercentage}%|">0.0%</div>
+                    <div class="stat__label">Average score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${#numbers.formatDecimal(bestPercentage, 1, 1)} + '%'">0.0%</div>
+                    <div class="stat__label">Best result</div>
+                </div>
+            </div>
+
+            <hr class="hr" th:unless="${results.isEmpty()}"/>
+
+            <div class="empty" th:if="${results.isEmpty()}">
+                You haven't taken any tests yet.
+            </div>
+
+            <div class="table-wrap" th:unless="${results.isEmpty()}">
+                <table class="data">
+                    <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Overtime</th>
+                        <th>Taken</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="result : ${results}">
+                        <td th:text="${result.quiz.title}">General Knowledge Quiz</td>
+                        <td th:text="|${result.score}/${result.total}|">3/5</td>
+                        <td th:text="${result.percentageLabel}">60.0%</td>
+                        <td th:text="${result.overtimeSeconds > 0 ? result.overtimeLabel : '—'}">—</td>
+                        <td th:text="${result.relativeTimeLabel}">2 hours ago</td>
+                        <td>
+                            <a class="btn btn--small btn--ghost"
+                               th:href="@{/student/results/{id}(id=${result.id})}">View</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:860px;">
+            <a class="tile tile--sky" th:href="@{/student/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

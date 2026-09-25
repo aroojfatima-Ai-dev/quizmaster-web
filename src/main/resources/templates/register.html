@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div class="page">
+        <div class="card">
+            <div class="card__header">
+                <h1 class="title">Register</h1>
+                <p class="subtitle">Join QuizMaster today</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="post" th:action="@{/register}">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" th:value="${username}"
+                           placeholder="3-50 characters" minlength="3" maxlength="50" required autofocus/>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" th:value="${email}"
+                           placeholder="you@example.com" maxlength="120" required/>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password"
+                               placeholder="At least 8 characters" minlength="8" maxlength="100" required/>
+                    </div>
+                    <div class="field">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                               placeholder="Repeat the password" minlength="8" maxlength="100" required/>
+                    </div>
+                </div>
+                <div class="field">
+                    <span class="field-label">Select Role</span>
+                    <div class="radio-row">
+                        <label class="radio-pill">
+                            <input type="radio" name="role" value="teacher"
+                                   th:checked="${role == null || role == 'teacher'}"/>
+                            <span>Teacher</span>
+                        </label>
+                        <label class="radio-pill">
+                            <input type="radio" name="role" value="student" th:checked="${role == 'student'}"/>
+                            <span>Student</span>
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--block" type="submit">Create Account</button>
+            </form>
+
+            <hr class="hr"/>
+            <a th:href="@{/login}">Already have an account? Login here</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

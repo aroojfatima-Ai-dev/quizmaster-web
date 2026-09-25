@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${quiz.title})}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide" style="text-align:left;">
+            <div class="card__header" style="text-align:center;">
+                <h1 class="title" th:text="${quiz.title}">General Knowledge Quiz</h1>
+                <p class="subtitle"
+                   th:text="${quiz.durationLabel + ' • ' + (quiz.allowsOvertime() ? 'overtime allowed' : 'auto-submit at 0:00') + ' • ' + quiz.language}">
+                    10 min • auto-submit at 0:00 • English
+                </p>
+            </div>
+
+            <div class="alert alert--error" th:if="${error}" th:text="${error}">Error.</div>
+
+            <form id="quizForm" method="post"
+                  th:action="@{/student/tests/{id}/answer(id=${quiz.id})}"
+                  th:attr="data-total=${total}, data-answered=${answeredCount}">
+                <input type="hidden" name="index" th:value="${index}"/>
+
+                <div class="timer-bar">
+                    <span id="quizTimer" class="timer"
+                          th:attr="data-deadline=${deadlineMillis},
+                                   data-overtime=${quiz.allowsOvertime()},
+                                   data-auto-submit=${!quiz.allowsOvertime()}"
+                          th:text="${'⏱ Time Remaining: 00:00'}">⏱ Time Remaining: 10:00</span>
+                    <span class="hint" th:text="|Question ${index + 1} of ${total} • ${answeredCount} answered|">
+                        Question 1 of 5 • 0 answered
+                    </span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress__bar" th:style="|width:${(index + 1) * 100 / total}%|"></div>
+                </div>
+
+                <p class="question-text" style="margin-top:18px;"
+                   th:attr="dir=${direction}" th:text="${question.questionText}">
+                    What is the capital of France?
+                </p>
+
+                <div class="options-grid">
+                    <label class="option-line" th:each="key : ${ {'A','B','C','D'} }">
+                        <input type="radio" name="choice" th:value="${key}" th:checked="${selected == key}"/>
+                        <span class="option-line__key" th:text="${key} + ')'">A)</span>
+                        <span th:attr="dir=${direction}" th:text="${question.optionText(key)}">Berlin</span>
+                    </label>
+                </div>
+
+                <div class="nav-row">
+                    <button class="btn btn--ghost" type="submit" name="action" value="prev"
+                            th:disabled="${index == 0}">← Previous</button>
+                    <button class="btn btn--ghost" type="submit" name="action" value="next"
+                            th:disabled="${index + 1 >= total}">Next Question →</button>
+                    <span class="spacer"></span>
+                    <button class="btn btn--primary" type="submit" name="action" value="submit" id="submitButton">
+                        ✓ Submit Test
+                    </button>
+                </div>
+
+                <!-- question palette: jumps to a question and keeps the answer chosen on screen -->
+                <div class="palette">
+                    <a th:each="entry, stat : ${questions}"
+                       th:href="@{/student/tests/{id}/take(id=${quiz.id}, q=${stat.index})}"
+                       th:attr="data-goto=${stat.index}"
+                       th:classappend="${(stat.index == index ? 'active ' : '') + (answers.containsKey(entry.id) ? 'answered' : '')}"
+                       th:text="${stat.count}">1</a>
+                </div>
+                <p class="hint">
+                    Green numbers are answered. Your answers are kept on the server, so refreshing the page
+                    never loses them.
+                </p>
+            </form>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/timer.js}" defer></script>
+<script th:src="@{/js/test.js}" defer></script>
+</body>
+</html>

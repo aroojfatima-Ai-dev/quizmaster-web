@@ -1,0 +1,7 @@
+# Spring Boot discovers EnvironmentPostProcessors through this file. On a fat
+# jar the application's META-INF directory sits at the archive root and is read
+# by SpringFactoriesLoader, which is why DbEnvironmentPostProcessor lives here
+# rather than in an EnvironmentPostProcessor.imports file (that mechanism is
+# only used for auto-configurations).
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.quizmaster.db.DbEnvironmentPostProcessor

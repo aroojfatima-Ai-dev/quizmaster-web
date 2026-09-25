@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Review Imported Questions')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header" style="text-align:center;">
+                <h1 class="title title--teacher">Review Imported Questions</h1>
+                <p class="subtitle"
+                   th:text="|${draft.fileType} ${draft.fileName} • ${draft.questionsFound} question(s) found|">
+                    Text file sample-questions.txt • 5 question(s) found
+                </p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat__value" th:text="${draft.questionsFound}">5</div>
+                    <div class="stat__label">Questions found</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${draft.questions.size()}">5</div>
+                    <div class="stat__label">Ready to import</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${draft.removedCount}">0</div>
+                    <div class="stat__label">Removed by you</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value" th:text="${draft.failures.size()}">0</div>
+                    <div class="stat__label">Skipped</div>
+                </div>
+            </div>
+
+            <p class="hint" th:if="${manualCount > 0}"
+               th:text="|${manualCount} question(s) you typed by hand will be saved with these.|">
+                2 question(s) you typed by hand will be saved with these.
+            </p>
+
+            <hr class="hr"/>
+
+            <div class="empty" th:if="${draft.everythingRemoved}">
+                You removed every imported question.
+                <a th:href="@{/teacher/tests/new/import}">Upload a different file</a>, or go back and save the
+                questions you typed by hand.
+            </div>
+            <div class="empty" th:if="${questions.isEmpty() && !draft.everythingRemoved}">
+                No question in this file could be imported. See the skipped list below.
+            </div>
+
+            <ul class="list" th:unless="${questions.isEmpty()}">
+                <li class="item" th:each="question, stat : ${questions}">
+                    <div class="item__top">
+                        <div>
+                            <p class="item__title" th:text="|Q${stat.count}. ${question.questionText}|">Q1. ...</p>
+                            <p class="item__meta">A) <span th:text="${question.optionA}">Berlin</span></p>
+                            <p class="item__meta">B) <span th:text="${question.optionB}">Paris</span></p>
+                            <p class="item__meta">C) <span th:text="${question.optionC}">Madrid</span></p>
+                            <p class="item__meta">D) <span th:text="${question.optionD}">Rome</span></p>
+                            <p class="item__meta">
+                                <span class="chip chip--ok"
+                                      th:text="|✓ Answer: ${question.correctOption} — ${question.optionText(question.correctOption)}|">
+                                    ✓ Answer: B — Paris
+                                </span>
+                                <span class="chip chip--muted" th:text="${question.topic}">Geography</span>
+                                <span class="chip chip--sky" th:text="${question.difficulty}">EASY</span>
+                                <span class="chip chip--muted" th:text="|line ${question.lineNumber}|">line 1</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item__actions">
+                        <a class="btn btn--small btn--ghost"
+                           th:href="@{/teacher/tests/new/import/edit(index=${stat.index})}">✏ Edit</a>
+                        <form method="post" th:action="@{/teacher/tests/new/import/remove}"
+                              data-confirm="Remove this question from the import?">
+                            <input type="hidden" name="index" th:value="${stat.index}"/>
+                            <button class="btn btn--small btn--danger" type="submit">🗑 Remove</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="skipped" th:unless="${failures.isEmpty()}" style="margin-top:18px;">
+                <strong th:text="|${failures.size()} block(s) were skipped|">2 block(s) were skipped</strong>
+                <ul>
+                    <li th:each="failure : ${failures}">
+                        <span th:text="|${failure.lineLabel}: ${failure.reason}|">line 12: Missing option C.</span>
+                        <em th:if="${!failure.shortPreview.isEmpty()}" th:text="|— \\\"${failure.shortPreview}\\\"|">
+                            — "Q: ..."
+                        </em>
+                    </li>
+                </ul>
+            </div>
+
+            <hr class="hr"/>
+
+            <form method="post" th:action="@{/teacher/tests/new/import/save}" data-one-shot>
+                <div class="nav-row">
+                    <a class="btn btn--ghost" th:href="@{/teacher/tests/new/import}">📄 Upload a different file</a>
+                    <a class="btn btn--ghost" th:href="@{/teacher/tests/new/questions}">← Back to Questions</a>
+                    <span class="spacer"></span>
+                    <button class="btn btn--primary" type="submit">✓ Confirm &amp; Save All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

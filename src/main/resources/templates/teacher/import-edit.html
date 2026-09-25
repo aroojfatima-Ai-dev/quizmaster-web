@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Imported Question')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide" style="text-align:left;">
+            <div class="card__header" style="text-align:center;">
+                <h1 class="title title--teacher">Edit Imported Question</h1>
+                <p class="subtitle" th:text="|Imported question ${index + 1} (from line ${question.lineNumber})|">
+                    Imported question 1 (from line 1)
+                </p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <form method="post" th:action="@{/teacher/tests/new/import/edit}">
+                <input type="hidden" name="index" th:value="${index}"/>
+
+                <div class="field">
+                    <label for="questionText">Question</label>
+                    <textarea id="questionText" name="questionText" rows="2" maxlength="2000" required
+                              th:attr="dir=${direction}" th:text="${question.questionText}">What is the capital of France?</textarea>
+                </div>
+
+                <div class="options-grid">
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionA">A)</label>
+                        <input type="text" id="optionA" name="optionA" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${question.optionA}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionB">B)</label>
+                        <input type="text" id="optionB" name="optionB" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${question.optionB}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionC">C)</label>
+                        <input type="text" id="optionC" name="optionC" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${question.optionC}"/>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="optionD">D)</label>
+                        <input type="text" id="optionD" name="optionD" maxlength="500" required
+                               th:attr="dir=${direction}" th:value="${question.optionD}"/>
+                    </div>
+                </div>
+
+                <div class="field" style="margin-top:14px;">
+                    <span class="field-label">Correct Option:</span>
+                    <div class="radio-row">
+                        <label class="radio-pill" th:each="key : ${ {'A','B','C','D'} }">
+                            <input type="radio" name="correctOption" th:value="${key}"
+                                   th:checked="${question.correctOption == key}"/>
+                            <span th:text="${key}">A</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" name="topic" maxlength="100" th:value="${question.topic}"/>
+                    </div>
+                    <div class="field">
+                        <label for="difficulty">Difficulty:</label>
+                        <select id="difficulty" name="difficulty">
+                            <option value="EASY" th:selected="${question.difficulty == 'EASY'}">Easy</option>
+                            <option value="MEDIUM" th:selected="${question.difficulty == 'MEDIUM'}">Medium</option>
+                            <option value="HARD" th:selected="${question.difficulty == 'HARD'}">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="nav-row">
+                    <a class="btn btn--ghost" th:href="@{/teacher/tests/new/import/preview}">← Back to preview</a>
+                    <span class="spacer"></span>
+                    <button class="btn btn--primary" type="submit">✓ Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

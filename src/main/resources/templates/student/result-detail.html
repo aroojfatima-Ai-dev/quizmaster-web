@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Result')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide">
+            <div class="card__header">
+                <h1 class="title">Test Results</h1>
+                <p class="subtitle" th:text="|Test: ${result.quiz.title}|">Test: General Knowledge Quiz</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="score-card">
+                <div class="score" th:text="|You scored ${result.score} out of ${result.total}|">
+                    You scored 3 out of 5
+                </div>
+                <div class="score-percent" th:text="|Score Percentage: ${result.percentageLabel}|">Score Percentage: 60.0%</div>
+                <div class="overtime-note" th:if="${result.overtimeSeconds > 0}"
+                     th:text="|Overtime Used: ${result.overtimeSeconds} seconds|">Overtime Used: 42 seconds</div>
+                <p class="meta-line" th:text="|Submitted ${result.takenAtLabel}|">Submitted 25 Sep 2026, 18:04</p>
+            </div>
+
+            <h2 class="section" style="text-align:left;">The paper you took</h2>
+            <p class="hint" style="text-align:left;">
+                The per-question review is shown on the result screen straight after submitting, as the answers
+                are not stored in the database.
+            </p>
+
+            <ul class="list" style="margin-top:12px;">
+                <li class="item" th:each="entry, stat : ${difficultyBreakdown}">
+                    <div class="item__top">
+                        <p class="item__title" th:text="|${entry.key} questions|">Easy questions</p>
+                        <span class="chip chip--sky" th:text="${entry.value}">2</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="nav-row" style="margin-top:22px;">
+                <a class="btn btn--ghost" th:href="@{/student/results}">← Back to Results</a>
+                <span class="spacer"></span>
+                <a class="btn btn--primary"
+                   th:href="@{/student/tests/{id}/take(id=${result.quiz.id}, restart=true)}">↻ Retake Test</a>
+            </div>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:620px;">
+            <a class="tile tile--sky" th:href="@{/student/dashboard}">Return to Student Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

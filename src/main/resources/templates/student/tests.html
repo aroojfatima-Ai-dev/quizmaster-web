@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Available Tests')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header">
+                <h1 class="title title--student">Available Tests</h1>
+                <p class="subtitle">Public tests, plus the tests made for the classes you joined.</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="empty" th:if="${tests.isEmpty()}">No tests available for you at the moment.</div>
+
+            <ul class="list" th:unless="${tests.isEmpty()}">
+                <li class="item" th:each="quiz : ${tests}">
+                    <div class="item__top">
+                        <div>
+                            <p class="item__title" th:text="${quiz.title}">General Knowledge Quiz</p>
+                            <p class="item__meta">
+                                <span class="chip chip--sky" th:text="|⏱ ${quiz.durationLabel}|">⏱ 10 min</span>
+                                <span class="chip chip--muted" th:text="${quiz.language}">English</span>
+                                <span class="chip"
+                                      th:classappend="${quiz.allowsOvertime()} ? 'chip--amber' : 'chip--muted'"
+                                      th:text="${quiz.allowsOvertime()} ? 'Overtime allowed' : 'Auto-submit at 0:00'">Auto-submit at 0:00</span>
+                                <span class="chip chip--purple"
+                                      th:text="${quiz.publicTest ? 'Public' : (quiz.classRoom != null ? quiz.classRoom.className : 'Class only')}">Public</span>
+                            </p>
+                            <p class="item__meta" th:text="|${questionCounts[quiz.id]} question(s) • by ${quiz.createdBy.username}|">
+                                5 question(s) • by prof_smith
+                            </p>
+                            <p class="item__meta" th:if="${lastAttempts.containsKey(quiz.id)}">
+                                Last attempt:
+                                <strong th:text="|${lastAttempts[quiz.id].score}/${lastAttempts[quiz.id].total} (${lastAttempts[quiz.id].percentageLabel})|">
+                                    3/5 (60.0%)
+                                </strong>
+                                <span th:text="|• ${lastAttempts[quiz.id].takenAtLabel}|"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item__actions">
+                        <a class="btn btn--small btn--primary"
+                           th:href="@{/student/tests/{id}/take(id=${quiz.id}, restart=true)}">Start Test →</a>
+                        <a class="btn btn--small btn--ghost"
+                           th:if="${lastAttempts.containsKey(quiz.id)}"
+                           th:href="@{/student/tests/{id}/result(id=${quiz.id})}">Last result</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:860px;">
+            <a class="tile tile--sky" th:href="@{/student/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

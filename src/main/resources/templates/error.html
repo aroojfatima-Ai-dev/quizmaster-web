@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--
+  The error screen. Also used by Spring Boot's error handling: when a request
+  fails with a status code, this template is rendered instead of the Whitelabel
+  page (server.error.whitelabel.enabled=false).
+-->
+<head th:replace="~{fragments/layout :: head('Problem')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide">
+            <div class="card__header">
+                <h1 class="title">Something went wrong</h1>
+                <p class="subtitle" th:text="${status != null ? 'HTTP ' + status : 'Please try again'}">HTTP 500</p>
+            </div>
+
+            <div class="alert alert--error" th:if="${errorMessage}" th:text="${errorMessage}">
+                The message for the user.
+            </div>
+            <div class="alert alert--error" th:if="${errorMessage == null and error != null}" th:text="${error}">
+                Error description.
+            </div>
+            <div class="alert alert--error" th:if="${errorMessage == null and error == null}" th:text="${message}">
+                Unexpected problem.
+            </div>
+
+            <p class="hint" th:if="${path != null}" th:text="'Request: ' + ${path}">Request: /path</p>
+
+            <div class="tiles tiles--compact" style="margin-top:20px;">
+                <a class="tile tile--sky" th:href="${currentUser == null ? '/' : (currentUser.teacher ? '/teacher/dashboard' : '/student/dashboard')}">← Back to Dashboard</a>
+                <a class="tile tile--rose" th:href="@{/logout}" th:if="${currentUser != null}">🚪 Logout</a>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

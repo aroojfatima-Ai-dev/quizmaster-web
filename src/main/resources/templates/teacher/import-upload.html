@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Upload Questions File')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--list">
+            <div class="card__header" style="text-align:center;">
+                <h1 class="title title--teacher">Upload Questions File</h1>
+                <p class="subtitle">
+                    Upload a PDF, Word (.docx) or text (.txt) file that follows the required file format.
+                    Nothing is saved until you confirm on the preview screen.
+                    <a th:href="@{/teacher/tests/new/import/sample}">Download the sample file</a> to see the format.
+                </p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <h2 class="section">Required file format</h2>
+            <pre class="format">Q: &lt;question text&gt;
+A) &lt;option A&gt;
+B) &lt;option B&gt;
+C) &lt;option C&gt;
+D) &lt;option D&gt;
+Answer: &lt;A, B, C, or D&gt;
+Topic: &lt;topic text&gt;            (optional, defaults to General)
+Difficulty: &lt;EASY, MEDIUM or HARD&gt;  (optional, defaults to MEDIUM)</pre>
+
+            <div class="alert alert--info">
+                <p style="margin:0 0 8px;"><strong>What the reader accepts</strong></p>
+                <ul style="margin:0; padding-left:20px;">
+                    <li>A blank line between questions is conventional, not required.</li>
+                    <li>Only a <code>Q:</code> line starts a new question; wrapped lines are joined to the field above.</li>
+                    <li>A whole question on one line works:
+                        <code>Q: Capital of France? A) Berlin B) Paris C) Madrid D) Rome Answer: B</code>
+                    </li>
+                    <li>The answer may be written out instead of as a letter (<code>Answer: Paris</code>). If two
+                        options fit, nothing is guessed — the block is reported instead.</li>
+                    <li>Difficulty synonyms (<em>Easy, Difficult, Med, Hard (level 3)</em>) map to the nearest level.</li>
+                    <li>Blocks that cannot be read are listed with their line number and reason.</li>
+                    <li>At most 200 questions per file; the rest are reported as skipped.</li>
+                </ul>
+            </div>
+
+            <form method="post" th:action="@{/teacher/tests/new/import}" enctype="multipart/form-data" data-one-shot>
+                <div class="field">
+                    <label for="file">Questions file (.pdf, .docx or .txt)</label>
+                    <input type="file" id="file" name="file" accept=".pdf,.docx,.txt,.text,.csv" required/>
+                </div>
+                <div class="nav-row">
+                    <a class="btn btn--ghost" th:href="@{/teacher/tests/new/questions}">← Back to Questions</a>
+                    <span class="spacer"></span>
+                    <button class="btn btn--primary" type="submit">Read file &amp; preview</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

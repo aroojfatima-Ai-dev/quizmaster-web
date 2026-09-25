@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Test Results')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide">
+            <div class="card__header">
+                <h1 class="title">Test Results</h1>
+                <p class="subtitle" th:text="|Test: ${quiz.title}|">Test: General Knowledge Quiz</p>
+            </div>
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- detailed review: right after submitting -->
+            <div th:if="${detailedReview}">
+                <div class="score-card">
+                    <div class="score" th:text="|You scored ${score} out of ${total}|">You scored 3 out of 5</div>
+                    <div class="score-percent" th:text="|Score Percentage: ${percentage}%|">Score Percentage: 60.0%</div>
+                    <div class="overtime-note" th:if="${overtimeSeconds > 0}"
+                         th:text="|Overtime Used: ${overtimeSeconds} seconds|">Overtime Used: 42 seconds</div>
+                    <div class="alert alert--info" th:if="${autoSubmitted}" style="margin:14px 0 0;">
+                        The countdown reached zero, so your test was submitted automatically.
+                    </div>
+                </div>
+
+                <h2 class="section" style="text-align:left;">Detailed Answer Review:</h2>
+                <div class="review">
+                    <div class="review-card"
+                         th:each="row, stat : ${review}"
+                         th:classappend="${row.correct ? 'review-card--correct' : 'review-card--wrong'}">
+                        <div class="review-card__head">
+                            <span th:text="|Question ${stat.count}|">Question 1</span>
+                            <span class="chip chip--ok" th:if="${row.correct}">✓ Correct</span>
+                            <span class="chip chip--bad" th:unless="${row.correct}">✗ Incorrect</span>
+                        </div>
+                        <p class="review-card__question" th:attr="dir=${quiz.textDirection}"
+                           th:text="${row.question.questionText}">What is the capital of France?</p>
+                        <p class="review-line">
+                            <span class="key">Your Answer:</span>
+                            <span th:classappend="${row.correct ? 'ok' : 'bad'}"
+                                  th:text="${row.studentAnswer == null
+                                            ? 'not answered'
+                                            : row.studentAnswer + ') ' + row.studentText}">B) Paris</span>
+                        </p>
+                        <p class="review-line">
+                            <span class="key">Correct answer:</span>
+                            <span class="ok" th:text="${row.correctAnswer + ') ' + row.correctText}">B) Paris</span>
+                        </p>
+                        <p class="review-line">
+                            <span class="chip chip--muted" th:text="${row.question.topic}">Geography</span>
+                            <span class="chip chip--sky" th:text="${row.question.getDifficultyLabel()}">Easy</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- later visit: only the recorded score is available -->
+            <div th:unless="${detailedReview}">
+                <div class="score-card">
+                    <div class="score" th:text="|You scored ${result.score} out of ${result.total}|">
+                        You scored 3 out of 5
+                    </div>
+                    <div class="score-percent" th:text="|Score Percentage: ${result.percentageLabel}|">Score Percentage: 60.0%</div>
+                    <div class="overtime-note" th:if="${result.overtimeSeconds > 0}"
+                         th:text="|Overtime Used: ${result.overtimeSeconds} seconds|">Overtime Used: 42 seconds</div>
+                    <p class="meta-line" th:text="|Submitted ${result.takenAtLabel}|">Submitted 25 Sep 2026, 18:04</p>
+                </div>
+                <div class="alert alert--info">
+                    The detailed answer review is shown on the result screen right after you submit a test.
+                    Your score is saved in "My Results History".
+                </div>
+            </div>
+
+            <div class="nav-row" style="margin-top:22px;">
+                <a class="btn btn--ghost" th:href="@{/student/tests}">← Back to Available Tests</a>
+                <span class="spacer"></span>
+                <a class="btn btn--primary"
+                   th:href="@{/student/tests/{id}/take(id=${quiz.id}, restart=true)}">↻ Retake Test</a>
+            </div>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:620px;">
+            <a class="tile tile--sky" th:href="@{/student/dashboard}">Return to Student Dashboard</a>
+            <a class="tile tile--purple" th:href="@{/student/results}">📊 My Results History</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Submission')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: bubbles}"></div>
+
+<div class="canvas">
+    <div th:replace="~{fragments/layout :: topbar}"></div>
+    <div class="page">
+        <div class="card card--wide">
+            <div class="card__header">
+                <h1 class="title title--teacher">Submission</h1>
+                <p class="subtitle" th:text="|${result.student.username} • ${result.quiz.title}|">
+                    ali_student • General Knowledge Quiz
+                </p>
+            </div>
+
+            <div class="score-card">
+                <div class="score" th:text="|${result.score} / ${result.total}|">3 / 5</div>
+                <div class="score-percent" th:text="|Score Percentage: ${result.percentageLabel}|">60.0%</div>
+                <div class="overtime-note" th:if="${result.overtimeSeconds > 0}"
+                     th:text="|Overtime Used: ${result.overtimeSeconds} seconds|">Overtime Used: 42 seconds</div>
+                <p class="meta-line" th:text="|Submitted ${result.takenAtLabel}|">Submitted 25 Sep 2026, 18:04</p>
+            </div>
+
+            <h2 class="section" style="text-align:left;">Answer key</h2>
+            <p class="hint" style="text-align:left;">
+                The attempt stores the score; per-question answers are only kept while the student is
+                on their result screen, exactly as the desktop version did.
+            </p>
+
+            <ul class="list" style="margin-top:12px;">
+                <li class="item" th:each="question, stat : ${questions}">
+                    <p class="item__title" th:text="|Q${stat.count}. ${question.questionText}|">Q1. ...</p>
+                    <p class="item__meta">A) <span th:text="${question.optionA}">Berlin</span>
+                        <span th:if="${question.correctOption == 'A'}" class="chip chip--ok">✓ correct</span></p>
+                    <p class="item__meta">B) <span th:text="${question.optionB}">Paris</span>
+                        <span th:if="${question.correctOption == 'B'}" class="chip chip--ok">✓ correct</span></p>
+                    <p class="item__meta">C) <span th:text="${question.optionC}">Madrid</span>
+                        <span th:if="${question.correctOption == 'C'}" class="chip chip--ok">✓ correct</span></p>
+                    <p class="item__meta">D) <span th:text="${question.optionD}">Rome</span>
+                        <span th:if="${question.correctOption == 'D'}" class="chip chip--ok">✓ correct</span></p>
+                    <p class="item__meta">
+                        <span class="chip chip--muted" th:text="${question.topic}">Geography</span>
+                        <span class="chip chip--sky" th:text="${question.getDifficultyLabel()}">Easy</span>
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tiles tiles--compact" style="max-width:620px;">
+            <a class="tile tile--amber" th:href="@{/teacher/submissions}">← Back to Submissions</a>
+            <a class="tile tile--sky" th:href="@{/teacher/dashboard}">← Back to Dashboard</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: footer}"></div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

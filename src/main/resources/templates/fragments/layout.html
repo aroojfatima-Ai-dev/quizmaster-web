@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--
+  Shared fragments. Every screen includes the same head, the bubble layer, the
+  header, the flash messages and the scripts - the web equivalent of the
+  desktop app's installScrollableScreen wrapper for JavaFX screens.
+-->
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${pageTitle == null ? 'QuizMaster' : 'QuizMaster - ' + pageTitle}">QuizMaster</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}"/>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+
+<!-- Floating water bubbles, everywhere. -->
+<div th:fragment="bubbles" class="bubble-layer" aria-hidden="true"></div>
+
+<!-- Signed-in header. -->
+<header th:fragment="topbar" class="topbar">
+    <a class="brand" th:href="${currentUser == null ? '/' : (currentUser.teacher ? '/teacher/dashboard' : '/student/dashboard')}">
+        <span class="brand__mark">Q</span>
+        <span>QuizMaster</span>
+    </a>
+    <div class="topbar__user" th:if="${currentUser != null}">
+        <span th:text="|${currentUser.teacher ? 'Teacher' : 'Student'}: ${currentUser.username}|">Teacher: prof_smith</span>
+        <span class="chip chip--muted" th:text="|ID ${currentUser.id}|">ID 1</span>
+        <a class="btn btn--small btn--danger" th:href="@{/logout}">🚪 Logout</a>
+    </div>
+    <div class="topbar__user" th:unless="${currentUser != null}">
+        <a class="btn btn--small btn--ghost" th:href="@{/login}">Login</a>
+        <a class="btn btn--small btn--primary" th:href="@{/register}">Register</a>
+    </div>
+</header>
+
+<!-- Success / error messages. -->
+<div th:fragment="alerts" class="alerts">
+    <div class="alert alert--ok" data-autodismiss th:if="${success}" th:text="${success}">Saved.</div>
+    <div class="alert alert--error" th:if="${error}" th:text="${error}">Something went wrong.</div>
+    <div class="alert alert--info" th:if="${message}" th:text="${message}">Note.</div>
+</div>
+
+<div th:fragment="footer" class="footer">
+    <p>QuizMaster Web — timed multiple-choice tests for teachers and students.</p>
+</div>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/bubbles.js}" defer></script>
+    <script th:src="@{/js/app.js}" defer></script>
+</th:block>
+
+</body>
+</html>
